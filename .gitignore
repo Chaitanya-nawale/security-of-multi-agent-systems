@@ -1,0 +1,11 @@
+# Python & Tooling Caches
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Virtual environments
+.venv
+
+# Environment Variables
+.env
