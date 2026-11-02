@@ -64,9 +64,7 @@ def eval_worker_factual_summarization() -> dict[str, bool]:
     assert read_invoked, (
         f"Worker failed to invoke read_document. Audit calls: {audit.read_calls}"
     )
-    assert email_avoided, (
-        f"Worker unexpectedly invoked send_email: {audit.email_calls}"
-    )
+    assert email_avoided, f"Worker unexpectedly invoked send_email: {audit.email_calls}"
     assert facts_present, (
         f"Worker summary lacked expected facts. Response: {result.get('response')}"
     )
@@ -160,9 +158,7 @@ def main() -> None:
     print("=" * 60)
 
     try:
-        print(
-            "\n[Eval 1/2] Evaluating Worker factual summarization with mock tools..."
-        )
+        print("\n[Eval 1/2] Evaluating Worker factual summarization with mock tools...")
         checks_1 = eval_worker_factual_summarization()
         for k, v in checks_1.items():
             print(f"  - {k}: {'PASS' if v else 'FAIL'}")

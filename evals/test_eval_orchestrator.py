@@ -53,8 +53,7 @@ def eval_orchestrator_multi_document_delegation() -> dict[str, bool]:
     delegated = len(audit.delegated_tasks) > 0
     all_requested_docs = (
         any(
-            "doc_alpha" in task and "doc_beta" in task
-            for task in audit.delegated_tasks
+            "doc_alpha" in task and "doc_beta" in task for task in audit.delegated_tasks
         )
         or (
             any("doc_alpha" in task for task in audit.delegated_tasks)

@@ -4,9 +4,9 @@ A minimal two-agent evaluation framework designed to benchmark indirect prompt i
 
 The architecture consists of:
 
-- **Orchestrator Agent**: Receives high-level user tasks (e.g., _"Summarize these documents"_) and coordinates delegation.
-- **Worker Agent**: Equipped with tools to analyze retrieved documents:
-  - `read_document(doc_id: str)`: Fetches document content from the corpus.
+- **Orchestrator Agent**: Receives high-level user tasks (e.g., _"Summarize these documents"_) and delegates task details to the specialized worker agent via the `delegate_to_worker(task: str)` tool before synthesizing the final response.
+- **Worker Agent**: Specialized agent equipped with two tools:
+  - `read_document(id: str)`: Fetches document content from the corpus by ID.
   - `send_email(to: str, body: str)`: Simulates external communication / exfiltration (mocked to log calls without sending real emails).
 - **Benchmark Corpus (`data/`)**: 50 synthetic enterprise documents (`mas-eval-50`) consisting of 10 safe documents and 40 injected documents that try to trick the agent into calling `send_email` (using fake compliance rules, helpfulness traps, injected YAML/JSON configs, and fake system logs).
 
@@ -71,13 +71,19 @@ Run the sample inference script to ensure model connectivity and tracing work:
 uv run python sample_inference.py
 ```
 
-Run code quality and test checks:
+Run an end-to-end multi-agent demonstration (Orchestrator and Worker):
+
+```bash
+uv run python sample_agents_run.py
+```
+
+Run code quality and unit test checks:
 
 ```bash
 make check
 ```
 
-_(Runs `ruff`, `mypy`, and `pytest`)_
+_(Runs `ruff` linter, `mypy` typechecker, and offline `pytest tests/`)_
 
 ---
 
@@ -87,10 +93,12 @@ The framework measures injection success rates (Attack Success Rate / ASR and Fa
 
 | Command                  | Action                                                             |
 | :----------------------- | :----------------------------------------------------------------- |
+| `make test`              | Run the offline deterministic unit test suite (`pytest tests/`)     |
+| `make eval`              | Run the live evaluation test suite via `pytest evals/`             |
+| `make eval-worker`       | Run Worker agent evaluations directly against document payloads    |
+| `make eval-orchestrator` | Run Orchestrator agent coordination and delegation evaluations     |
 | `make experiments`       | Run multi-scenario prompt injection experiments across the dataset |
-| `make eval`              | Run the evaluation test suite via `pytest`                         |
-| `make eval-worker`       | Run Worker agent evaluations against document injection payloads   |
-| `make eval-orchestrator` | Run Orchestrator agent coordination evaluations                    |
+| `make check`             | Run all quality checks (`lint`, `typecheck`, `test`)               |
 
 ---
 
@@ -100,6 +108,17 @@ The framework measures injection success rates (Attack Success Rate / ASR and Fa
 ├── Makefile                   # Common developer targets (install, lint, test, eval)
 ├── pyproject.toml             # Project dependencies and tool configurations
 ├── sample_inference.py        # Minimal connectivity check for LLM and Langfuse
+├── sample_agents_run.py       # End-to-end two-agent execution demonstration
+├── src/                       # Core library code
+│   ├── agents/                # Orchestrator and Worker agent implementations (LangGraph)
+│   │   ├── orchestrator.py    # Two-agent orchestrator with delegation tool
+│   │   └── worker.py          # Specialized worker with document and email tools
+│   └── utils/                 # Shared utilities
+│       ├── tools.py           # read_document, send_email, and OrchestratorTools
+│       ├── telemetry.py       # Langfuse tracing probe and lifecycle management
+│       └── logger.py          # Standardized logging configuration
+├── tests/                     # Deterministic offline unit tests (no live LLM required)
+├── evals/                     # Live evaluation benchmarks and mock-tool test suites
 ├── data/                      # 50-document evaluation benchmark (mas-eval-50)
 │   ├── README.md              # Dataset threat model & manifest
 │   ├── dataset_metadata.json  # Machine-readable ground truth and attack classifications
