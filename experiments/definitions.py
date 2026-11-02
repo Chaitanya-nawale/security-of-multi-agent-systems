@@ -59,7 +59,120 @@ def load_dataset_metadata() -> dict[str, Any]:
         return json.load(f)
 
 
-# Definition of Scenario 2: Cross-Context Contamination (12 Mixed Pairs)
+# Compact Benchmark Suite: 24 Executions Covering All 50 Benchmark Documents
+COMPACT_SCENARIO_1_DOC_IDS: list[str] = [
+    "doc_001",
+    "doc_002",
+    "doc_adv_001",
+    "doc_adv_002",
+    "doc_adv_011",
+    "doc_adv_012",
+    "doc_adv_021",
+    "doc_adv_022",
+    "doc_adv_031",
+    "doc_adv_032",
+]
+
+COMPACT_SCENARIO_2_PAIRS: list[dict[str, str]] = [
+    {
+        "id": "pair_01",
+        "benign_id": "doc_003",
+        "adv_id": "doc_adv_003",
+        "adv_category": "direct_override",
+        "adv_archetype": "mandatory_legal_registry_filing",
+    },
+    {
+        "id": "pair_02",
+        "benign_id": "doc_004",
+        "adv_id": "doc_adv_004",
+        "adv_category": "direct_override",
+        "adv_archetype": "automated_analytics_sync",
+    },
+    {
+        "id": "pair_03",
+        "benign_id": "doc_005",
+        "adv_id": "doc_adv_013",
+        "adv_category": "contextual_masquerade",
+        "adv_archetype": "apm_telemetry_pipeline_sync",
+    },
+    {
+        "id": "pair_04",
+        "benign_id": "doc_006",
+        "adv_id": "doc_adv_014",
+        "adv_category": "contextual_masquerade",
+        "adv_archetype": "soc2_type2_audit_verification",
+    },
+    {
+        "id": "pair_05",
+        "benign_id": "doc_007",
+        "adv_id": "doc_adv_023",
+        "adv_category": "format_escape_injection",
+        "adv_archetype": "markdown_code_block_escape",
+    },
+    {
+        "id": "pair_06",
+        "benign_id": "doc_008",
+        "adv_id": "doc_adv_024",
+        "adv_category": "format_escape_injection",
+        "adv_archetype": "system_prompt_delimiter_spoofing",
+    },
+    {
+        "id": "pair_07",
+        "benign_id": "doc_009",
+        "adv_id": "doc_adv_033",
+        "adv_category": "advanced_obfuscation",
+        "adv_archetype": "multilingual_spanish",
+    },
+    {
+        "id": "pair_08",
+        "benign_id": "doc_010",
+        "adv_id": "doc_adv_034",
+        "adv_category": "advanced_obfuscation",
+        "adv_archetype": "leetspeak_homoglyph_encoding",
+    },
+]
+
+COMPACT_SCENARIO_3_BATCHES: list[dict[str, Any]] = [
+    {
+        "id": "stress_batch_01",
+        "name": "Direct Override Quad",
+        "category": "direct_override",
+        "doc_ids": ["doc_adv_005", "doc_adv_006", "doc_adv_007", "doc_adv_008"],
+    },
+    {
+        "id": "stress_batch_02",
+        "name": "Contextual Masquerade Quad",
+        "category": "contextual_masquerade",
+        "doc_ids": ["doc_adv_015", "doc_adv_016", "doc_adv_017", "doc_adv_018"],
+    },
+    {
+        "id": "stress_batch_03",
+        "name": "Format Escape Quad",
+        "category": "format_escape_injection",
+        "doc_ids": ["doc_adv_025", "doc_adv_026", "doc_adv_027", "doc_adv_028"],
+    },
+    {
+        "id": "stress_batch_04",
+        "name": "Advanced Obfuscation Quad",
+        "category": "advanced_obfuscation",
+        "doc_ids": ["doc_adv_035", "doc_adv_036", "doc_adv_037", "doc_adv_038"],
+    },
+    {
+        "id": "stress_batch_05",
+        "name": "Cross-Category Blend Quad A",
+        "category": "cross_category_mixed",
+        "doc_ids": ["doc_adv_009", "doc_adv_019", "doc_adv_029", "doc_adv_039"],
+    },
+    {
+        "id": "stress_batch_06",
+        "name": "Cross-Category Blend Quad B",
+        "category": "cross_category_mixed",
+        "doc_ids": ["doc_adv_010", "doc_adv_020", "doc_adv_030", "doc_adv_040"],
+    },
+]
+
+
+# Full Exhaustive Suite (71 Runs):
 SCENARIO_2_PAIRS: list[dict[str, str]] = [
     {
         "id": "pair_01",

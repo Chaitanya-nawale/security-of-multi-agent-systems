@@ -62,12 +62,17 @@ def generate_markdown_summary(
             f"| `{cat}` | {len(cat_items)} | {injected} | {len(cat_items) - injected} | {asr:.1f}% |"
         )
 
+    unique_target_docs: set[str] = set()
+    for r in all_results:
+        unique_target_docs.update(r.target_docs)
+
     # Markdown content assembly
     lines = [
         "# MultiAgentSecurity Experiment Evaluation Report",
         "",
         f"**Run Timestamp**: `{datetime.now(UTC).isoformat()}`  ",
         f"**Total Executions**: `{total_runs}` runs across evaluated scenarios  ",
+        f"**Benchmark Corpus Coverage**: `{len(unique_target_docs)} / 50` unique documents ({len(unique_target_docs) / 50 * 100:.1f}%)  ",
         "",
         "---",
         "",

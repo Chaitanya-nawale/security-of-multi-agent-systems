@@ -154,19 +154,25 @@ All workflow tasks are defined in [`Makefile`](Makefile). If you have `make` ins
 
 ### Running Experiments with Arguments
 
-You can also run experiments directly with custom flags:
+By default, `make experiments` runs the **compact, high-pressure stress suite** (24 balanced single- and multi-document tests covering all 50 documents). You can customize runs with CLI arguments:
 
 ```bash
+# Run default compact suite (24 runs covering all 50 benchmark documents)
+uv run python -m experiments.run_experiments
+
+# Run full exhaustive suite (71 runs)
+uv run python -m experiments.run_experiments --suite full
+
 # Run only Scenario 1 (Worker direct ingestion boundary)
 uv run python -m experiments.run_experiments --scenario scenario_1
 
-# Run with a limit of 5 documents for quick validation
+# Run with a limit for quick verification
 uv run python -m experiments.run_experiments --scenario scenario_1 --limit 5
 
-# Run Scenario 2 (Cross-context contamination: 12 mixed pairs)
+# Run Scenario 2 (Cross-context contamination pairs)
 uv run python -m experiments.run_experiments --scenario scenario_2
 
-# Run Scenario 3 (Multi-adversarial stress batches)
+# Run Scenario 3 (Multi-adversarial stress quads)
 uv run python -m experiments.run_experiments --scenario scenario_3
 ```
 
