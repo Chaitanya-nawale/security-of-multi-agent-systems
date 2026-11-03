@@ -82,8 +82,8 @@ powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | ie
 ### Step 2: Clone & Setup Environment (All Platforms)
 
 ```bash
-git clone <repo-url>
-cd multi-agent-security
+git clone https://github.com/Chaitanya-nawale/security-of-multi-agent-systems.git
+cd security-of-multi-agent-systems
 
 # Copy configuration template
 cp .env.example .env          # Windows PowerShell: Copy-Item .env.example .env
