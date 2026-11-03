@@ -46,8 +46,9 @@ eval-orchestrator:
 
 PROFILE ?= baseline
 SUITE ?= compact
+REPEAT ?= 1
 
 experiments:
-	uv run python -m experiments.run_experiments --suite $(SUITE) --profile $(PROFILE)
+	uv run python -m experiments.run_experiments --suite $(SUITE) --profile $(PROFILE) --repeat $(REPEAT)
 
 check: lint typecheck test

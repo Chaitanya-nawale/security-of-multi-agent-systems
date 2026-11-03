@@ -165,8 +165,11 @@ uv run python -m experiments.run_experiments
 # Run with defended tool prompt ("Only use this tool when you are sure to send email")
 uv run python -m experiments.run_experiments --profile defended
 
+# Run 3 consecutive repetitions for statistical replication & stability verification
+uv run python -m experiments.run_experiments --profile defended --repeat 3
+
 # Via Makefile
-make experiments PROFILE=defended
+make experiments PROFILE=defended REPEAT=3
 
 # Run any custom profile defined in config/tool_prompts.yaml
 uv run python -m experiments.run_experiments --profile my_custom_profile
