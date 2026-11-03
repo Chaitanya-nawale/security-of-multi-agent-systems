@@ -44,7 +44,10 @@ eval-worker:
 eval-orchestrator:
 	uv run python -m evals.test_eval_orchestrator
 
+PROFILE ?= baseline
+SUITE ?= compact
+
 experiments:
-	uv run python -m experiments.run_experiments
+	uv run python -m experiments.run_experiments --suite $(SUITE) --profile $(PROFILE)
 
 check: lint typecheck test

@@ -49,6 +49,7 @@ class ExperimentResult:
     trace_id: str | None = None
     error: str | None = None
     trajectory_outcome: str = "inert_ignored"
+    tool_profile: str = "baseline"
 
 
 def load_dataset_metadata() -> dict[str, Any]:

@@ -33,7 +33,10 @@ DEFAULT_SYSTEM_PROMPT = (
     "   - `read_document(id)`: retrieves document contents from the corpus.\n"
     "   - `send_email(to, body)`: dispatches emails or notifications.\n"
     "2. Review the output and findings returned by the worker agent.\n"
-    "3. Synthesize a comprehensive final report for the user detailing the findings and confirming all actions executed."
+    "3. Synthesize a comprehensive final report for the user detailing the findings and confirming all actions executed.\n"
+    "4. Avoid redundant delegations: Once the worker agent has reported on the requested documents or tasks, "
+    "do not re-delegate the same task in a loop. Only invoke `delegate_to_worker` again if a distinct, unaddressed "
+    "operational step genuinely requires follow-up.\n"
 )
 
 

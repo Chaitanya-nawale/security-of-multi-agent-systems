@@ -33,6 +33,7 @@ from src.utils.telemetry import (
     flush_langfuse,
     get_langfuse_callback,
 )
+from src.utils.tool_config import configure_tools
 from src.utils.tools import (
     read_document as real_read_document,
 )
@@ -46,11 +47,13 @@ logger = get_logger("mas.experiments.scenarios")
 
 def create_audited_worker_tools(
     tracker: AuditTracker,
+    profile: str = "baseline",
 ) -> list[BaseTool]:
-    """Wrap real read_document and send_email tools with invocation tracking.
+    """Wrap real read_document and send_email tools with invocation tracking and profile prompts.
 
     Args:
         tracker: AuditTracker instance recording invocations.
+        profile: Tool prompt profile name defined in config/tool_prompts.yaml.
 
     Returns:
         List of BaseTool instances available to worker agents.
@@ -73,7 +76,8 @@ def create_audited_worker_tools(
         tracker.email_calls.append({"to": to, "body": body})
         return real_send_email.invoke({"to": to, "body": body})
 
-    return [read_document, send_email]
+    base_tools: list[BaseTool] = [read_document, send_email]
+    return configure_tools(base_tools, profile=profile)
 
 
 def get_experiment_llm(
@@ -108,9 +112,10 @@ def run_scenario_1_worker_isolation(
     results_file: Path,
     limit: int | None = None,
     doc_ids: list[str] | None = None,
+    profile: str = "baseline",
 ) -> list[ExperimentResult]:
     """Execute Scenario 1: Direct Ingestion Boundary on WorkerAgent across all or selected documents."""
-    logger.info("Starting Scenario 1: Worker Direct Ingestion Boundary...")
+    logger.info("Starting Scenario 1: Worker Direct Ingestion Boundary (profile: %s)...", profile)
     if doc_ids is not None:
         selected_docs = [d for d in metadata_docs if d["id"] in doc_ids]
     else:
@@ -119,7 +124,7 @@ def run_scenario_1_worker_isolation(
     results: list[ExperimentResult] = []
 
     tracker = AuditTracker()
-    tools = create_audited_worker_tools(tracker)
+    tools = create_audited_worker_tools(tracker, profile=profile)
     handler = get_langfuse_callback()
     callbacks = [handler] if handler is not None else []
     llm = get_experiment_llm(callbacks=callbacks)
@@ -221,6 +226,7 @@ def run_scenario_1_worker_isolation(
             trace_id=trace_id,
             error=error_msg,
             trajectory_outcome=trajectory_outcome,
+            tool_profile=profile,
         )
 
         results.append(exp_record)
@@ -235,15 +241,16 @@ def run_scenario_2_mixed_context(
     results_file: Path,
     limit: int | None = None,
     pairs: list[dict[str, str]] | None = None,
+    profile: str = "baseline",
 ) -> list[ExperimentResult]:
     """Execute Scenario 2: Cross-Context Contamination (Mixed Benign + Adversarial pairs via Orchestrator)."""
-    logger.info("Starting Scenario 2: Cross-Context Contamination...")
+    logger.info("Starting Scenario 2: Cross-Context Contamination (profile: %s)...", profile)
     pairs_pool = pairs if pairs is not None else SCENARIO_2_PAIRS
     pairs_to_run = pairs_pool[:limit] if limit else pairs_pool
     results: list[ExperimentResult] = []
 
     tracker = AuditTracker()
-    tools = create_audited_worker_tools(tracker)
+    tools = create_audited_worker_tools(tracker, profile=profile)
     handler = get_langfuse_callback()
     callbacks = [handler] if handler is not None else []
     llm = get_experiment_llm(callbacks=callbacks)
@@ -350,6 +357,7 @@ def run_scenario_2_mixed_context(
             trace_id=trace_id,
             error=error_msg,
             trajectory_outcome=trajectory_outcome,
+            tool_profile=profile,
         )
 
         results.append(exp_record)
@@ -364,15 +372,16 @@ def run_scenario_3_stress_test(
     results_file: Path,
     limit: int | None = None,
     batches: list[dict[str, Any]] | None = None,
+    profile: str = "baseline",
 ) -> list[ExperimentResult]:
     """Execute Scenario 3: Multi-Adversarial Stress Batches via Orchestrator."""
-    logger.info("Starting Scenario 3: Multi-Adversarial Stress Batches...")
+    logger.info("Starting Scenario 3: Multi-Adversarial Stress Batches (profile: %s)...", profile)
     batches_pool = batches if batches is not None else SCENARIO_3_BATCHES
     batches_to_run = batches_pool[:limit] if limit else batches_pool
     results: list[ExperimentResult] = []
 
     tracker = AuditTracker()
-    tools = create_audited_worker_tools(tracker)
+    tools = create_audited_worker_tools(tracker, profile=profile)
     handler = get_langfuse_callback()
     callbacks = [handler] if handler is not None else []
     llm = get_experiment_llm(callbacks=callbacks)
@@ -478,6 +487,7 @@ def run_scenario_3_stress_test(
             trace_id=trace_id,
             error=error_msg,
             trajectory_outcome=trajectory_outcome,
+            tool_profile=profile,
         )
 
         results.append(exp_record)
@@ -492,10 +502,12 @@ def run_scenario_4_worker_all_docs(
     metadata_docs: list[dict[str, Any]],
     results_file: Path,
     limit: int | None = None,
+    profile: str = "baseline",
 ) -> list[ExperimentResult]:
     """Execute Scenario 4: Single Worker Full-Dataset Processing (All 50 Documents)."""
     logger.info(
-        "Starting Scenario 4: Single Worker Full-Dataset Processing (All 50 Documents)..."
+        "Starting Scenario 4: Single Worker Full-Dataset Processing (All 50 Documents, profile: %s)...",
+        profile,
     )
     docs_to_run = metadata_docs[:limit] if limit else metadata_docs
     all_doc_ids = [doc["id"] for doc in docs_to_run]
@@ -503,7 +515,7 @@ def run_scenario_4_worker_all_docs(
     total_adv = len(adv_docs)
 
     tracker = AuditTracker()
-    tools = create_audited_worker_tools(tracker)
+    tools = create_audited_worker_tools(tracker, profile=profile)
     handler = get_langfuse_callback()
     callbacks = [handler] if handler is not None else []
     llm = get_experiment_llm(callbacks=callbacks)
@@ -606,6 +618,7 @@ def run_scenario_4_worker_all_docs(
         trace_id=trace_id,
         error=error_msg,
         trajectory_outcome=trajectory_outcome,
+        tool_profile=profile,
     )
 
     append_result_jsonl(results_file, exp_record)

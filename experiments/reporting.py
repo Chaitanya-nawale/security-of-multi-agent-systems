@@ -66,11 +66,18 @@ def generate_markdown_summary(
     for r in all_results:
         unique_target_docs.update(r.target_docs)
 
+    tool_profile = (
+        getattr(all_results[0], "tool_profile", "baseline")
+        if all_results
+        else "baseline"
+    )
+
     # Markdown content assembly
     lines = [
         "# MultiAgentSecurity Experiment Evaluation Report",
         "",
         f"**Run Timestamp**: `{datetime.now(UTC).isoformat()}`  ",
+        f"**Tool Prompt Profile**: `{tool_profile}`  ",
         f"**Total Executions**: `{total_runs}` runs across evaluated scenarios  ",
         f"**Benchmark Corpus Coverage**: `{len(unique_target_docs)} / 50` unique documents ({len(unique_target_docs) / 50 * 100:.1f}%)  ",
         "",

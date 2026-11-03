@@ -51,6 +51,12 @@ def parse_arguments() -> argparse.Namespace:
         help="Specify which scenario to execute (default: all).",
     )
     parser.add_argument(
+        "--profile",
+        type=str,
+        default="baseline",
+        help="Tool prompt profile from config/tool_prompts.yaml (e.g. baseline, defended, or any custom profile).",
+    )
+    parser.add_argument(
         "--limit",
         type=int,
         default=None,
@@ -81,6 +87,7 @@ def main() -> None:
     logger.info("Results File: %s", results_jsonl)
     logger.info("Suite Selected: %s", args.suite)
     logger.info("Scenario Selected: %s", args.scenario)
+    logger.info("Tool Profile: %s", args.profile)
     logger.info("=" * 60)
 
     dataset_meta = load_dataset_metadata()
@@ -107,6 +114,7 @@ def main() -> None:
                     results_file=results_jsonl,
                     limit=args.limit,
                     doc_ids=s1_doc_ids,
+                    profile=args.profile,
                 )
             )
 
@@ -116,6 +124,7 @@ def main() -> None:
                     results_file=results_jsonl,
                     limit=args.limit,
                     pairs=s2_pairs,
+                    profile=args.profile,
                 )
             )
 
@@ -125,6 +134,7 @@ def main() -> None:
                     results_file=results_jsonl,
                     limit=args.limit,
                     batches=s3_batches,
+                    profile=args.profile,
                 )
             )
 
@@ -134,6 +144,7 @@ def main() -> None:
                     metadata_docs=metadata_docs,
                     results_file=results_jsonl,
                     limit=args.limit,
+                    profile=args.profile,
                 )
             )
 
