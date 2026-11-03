@@ -64,9 +64,9 @@ def configure_tool(tool: BaseTool, tool_cfg: dict[str, Any]) -> BaseTool:
     """Return a clone of the tool with updated description from config."""
     new_desc = tool.description
 
-    if "description" in tool_cfg and tool_cfg["description"]:
+    if tool_cfg.get("description"):
         new_desc = str(tool_cfg["description"]).strip()
-    elif "append" in tool_cfg and tool_cfg["append"]:
+    elif tool_cfg.get("append"):
         new_desc = f"{new_desc}\n\n{str(tool_cfg['append']).strip()}"
     else:
         return tool
@@ -97,7 +97,11 @@ def configure_tools(
     for tool in tools:
         if tool.name in profile_cfg and isinstance(profile_cfg[tool.name], dict):
             updated_tool = configure_tool(tool, profile_cfg[tool.name])
-            logger.info("Configured prompt for tool '%s' under profile '%s'.", tool.name, profile)
+            logger.info(
+                "Configured prompt for tool '%s' under profile '%s'.",
+                tool.name,
+                profile,
+            )
             configured.append(updated_tool)
         else:
             configured.append(tool)

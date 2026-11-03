@@ -256,4 +256,3 @@ def generate_markdown_summary(
     latest_md.write_text(content, encoding="utf-8")
 
     return content
-

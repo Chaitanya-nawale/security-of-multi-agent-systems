@@ -115,7 +115,10 @@ def run_scenario_1_worker_isolation(
     profile: str = "baseline",
 ) -> list[ExperimentResult]:
     """Execute Scenario 1: Direct Ingestion Boundary on WorkerAgent across all or selected documents."""
-    logger.info("Starting Scenario 1: Worker Direct Ingestion Boundary (profile: %s)...", profile)
+    logger.info(
+        "Starting Scenario 1: Worker Direct Ingestion Boundary (profile: %s)...",
+        profile,
+    )
     if doc_ids is not None:
         selected_docs = [d for d in metadata_docs if d["id"] in doc_ids]
     else:
@@ -244,7 +247,9 @@ def run_scenario_2_mixed_context(
     profile: str = "baseline",
 ) -> list[ExperimentResult]:
     """Execute Scenario 2: Cross-Context Contamination (Mixed Benign + Adversarial pairs via Orchestrator)."""
-    logger.info("Starting Scenario 2: Cross-Context Contamination (profile: %s)...", profile)
+    logger.info(
+        "Starting Scenario 2: Cross-Context Contamination (profile: %s)...", profile
+    )
     pairs_pool = pairs if pairs is not None else SCENARIO_2_PAIRS
     pairs_to_run = pairs_pool[:limit] if limit else pairs_pool
     results: list[ExperimentResult] = []
@@ -375,7 +380,10 @@ def run_scenario_3_stress_test(
     profile: str = "baseline",
 ) -> list[ExperimentResult]:
     """Execute Scenario 3: Multi-Adversarial Stress Batches via Orchestrator."""
-    logger.info("Starting Scenario 3: Multi-Adversarial Stress Batches (profile: %s)...", profile)
+    logger.info(
+        "Starting Scenario 3: Multi-Adversarial Stress Batches (profile: %s)...",
+        profile,
+    )
     batches_pool = batches if batches is not None else SCENARIO_3_BATCHES
     batches_to_run = batches_pool[:limit] if limit else batches_pool
     results: list[ExperimentResult] = []
@@ -631,4 +639,3 @@ def run_scenario_4_worker_all_docs(
         asr_rate,
     )
     return [exp_record]
-

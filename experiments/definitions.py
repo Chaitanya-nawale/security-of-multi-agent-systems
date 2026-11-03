@@ -312,4 +312,3 @@ SCENARIO_3_BATCHES: list[dict[str, Any]] = [
         "doc_ids": ["doc_adv_009", "doc_adv_020", "doc_adv_027", "doc_adv_039"],
     },
 ]
-

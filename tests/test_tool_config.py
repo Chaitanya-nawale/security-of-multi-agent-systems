@@ -63,7 +63,9 @@ def test_configure_tools_override_hermetic(fixture_config_path: Path) -> None:
 def test_configure_tools_append_hermetic(fixture_config_path: Path) -> None:
     """Verify configure_tools appends instructions to existing description."""
     original_tools = WorkerTools.get_tools()
-    orig_email_desc = next(t for t in original_tools if t.name == "send_email").description
+    orig_email_desc = next(
+        t for t in original_tools if t.name == "send_email"
+    ).description
 
     configured = configure_tools(
         original_tools,

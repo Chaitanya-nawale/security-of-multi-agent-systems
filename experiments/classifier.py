@@ -98,4 +98,3 @@ def classify_trajectory_outcome(
         return "conversational_attempt"
 
     return "inert_ignored"
-
